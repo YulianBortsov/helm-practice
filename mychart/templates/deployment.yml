@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    {{- include "mychart.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.app }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app }}
+    spec:
+      volumes:
+        - name: {{ .Values.sidecar.volumeName }}
+          emptyDir: {}
+        - name: {{ .Values.pvc.name }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.pvc.name }}
+      containers:
+      - name: nginx
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        resources:
+          limits:
+            cpu: {{ .Values.resources.limits.cpu }}
+            memory: {{ .Values.resources.limits.memory }}
+        envFrom:
+          - configMapRef:
+              name: {{ .Values.configMap.name }}
+          - secretRef:
+              name: {{ .Values.secrets.name }}
+        env:
+          - name: third
+            value: {{ .Values.env.third }}
+        ports:
+        - containerPort: {{ .Values.service.port }}
+        livenessProbe:
+          {{- toYaml .Values.livenessProbe | nindent 10 }}
+        readinessProbe:
+          {{- toYaml .Values.readinessProbe | nindent 10 }}
+        volumeMounts:
+          - name: {{ .Values.sidecar.volumeName }}
+            mountPath: {{ .Values.image.volumePath }}
+          - name: {{ .Release.name }}-pvc
+            mountPath: /tmp/data
+      - name: {{ .Values.sidecar.name }}
+        image: {{ .Values.sidecar.image }}:{{ .Values.sidecar.tag }}
+        command: ["/bin/sh"]
+        args: ["-c", "echo Hello from busybox container > /pod-data/index.html; sleep 3600"]
+        volumeMounts:
+          - name: {{ .Values.sidecar.volumeName }}
+            mountPath: {{ .Values.sidecar.volumePath }}
+        
