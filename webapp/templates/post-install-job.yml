@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-post-install-job
+  labels:
+    {{- include "webapp.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: post-install, post-upgrade
+    helm.sh/hook-weight: "-5"
+    helm.sh/hook-delete-policy: before-hook-creation
+spec:
+  template:
+    metadata:
+      name: {{ .Release.Name }}-post-intsall-job
+      labels:
+        {{- include "webapp.labels" . | nindent 8 }}
+    spec:
+      restartPolicy: Never
+      {{- with .Values.postInstallJob }}
+      containers:
+        - name: {{ .name }}
+          image: {{ .imageRepo }}:{{ .tag }}
+          command: ["curl"]
+          args:
+            -  {{ include "webapp.fullname" $ }}-service:{{ $.Values.service.port }}
+      {{- end}}   

@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: webapp-config
   labels:
-    app: webapp
+    {{- include "webapp.dynamicLabels" . | nindent 4 }}
 data:
   app.py: |
 {{ .Files.Get "app.py" | indent 4 }}

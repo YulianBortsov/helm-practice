@@ -14,7 +14,7 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-      app: {{ .Release.Name }}
+      {{- include "webapp.dynamicLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -22,7 +22,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        app: {{ .Release.Name }}
+        {{- include "webapp.dynamicLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -51,7 +51,10 @@ spec:
             - name: REDIS_PORT
               value: {{ .port | quote }}
             - name: REDIS_PASSWORD
-              value: {{ .auth.password }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Release.Name }}-redis
+                  key: redis-password
           {{- end }}
           ports:
             - name: http

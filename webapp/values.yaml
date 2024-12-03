@@ -13,11 +13,15 @@ nginxPod:
   image: nginx
   tag: "latest"
   replicas: 1
-  enabled: true
+  enabled: false
   env:
     FIRST_ENV: first_env
     SECOND_ENV: second_env
 
+postInstallJob:
+  name: curling-container
+  imageRepo: curlimages/curl
+  tag: "8.11.0"
 
 isProd: false
 prod:
@@ -31,7 +35,7 @@ redis:
   enabled: true
   port: 6379
   auth:
-    password: redispass
+    password: ""
   architecture: standalone
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 image:
@@ -117,11 +121,21 @@ resources: {}
 livenessProbe:
   httpGet:
     path: /
-    port: http
+    port: 8080
+  initialDelaySeconds: 5   # Delay before the first check
+  periodSeconds: 10        # Check every 10 seconds
+  timeoutSeconds: 1        # Timeout if no response within 1 second
+  successThreshold: 1      # Require 1 successful check to pass
+  failureThreshold: 3      # Fail after 3 consecutive failures
 readinessProbe:
   httpGet:
     path: /
-    port: http
+    port: 8080
+  initialDelaySeconds: 10  # Delay before the first check
+  periodSeconds: 15        # Check every 15 seconds
+  timeoutSeconds: 1        # Timeout if no response within 1 second
+  successThreshold: 2      # Require 1 successful check to pass
+  failureThreshold: 5      # Fail after 5 consecutive failures
 
 #This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/
 autoscaling:

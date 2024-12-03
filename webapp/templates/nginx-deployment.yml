@@ -3,7 +3,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .name }}-Deployment
+  name: {{ .name }}-deployment
   labels:
     {{- include "webapp.nginxPodLabels" . | nindent 4 }}    
 spec:
@@ -32,7 +32,7 @@ spec:
         - name: {{ .Values.nginxPod.name }}-container
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .image }}:{{ .tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.nginxPod.image }}:{{ .Values.nginxPod.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: ["sh", "-c"]
           args:
@@ -44,14 +44,7 @@ spec:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
-          livenessProbe:
-            {{- toYaml .Values.livenessProbe | nindent 12 }}
-          readinessProbe:
-            {{- toYaml .Values.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- with .Values.volumeMounts }}
-          volumeMounts:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}     
+             
 {{- end }}
