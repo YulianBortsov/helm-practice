@@ -139,7 +139,7 @@ backend:
     type: ClusterIP
     port: 5000
   env:
-    DATABASE_USER: dbuser
+    DATABASE_USER: user
     DATABASE_NAME: app_db
   livenessProbe:
     httpGet:
@@ -171,7 +171,7 @@ backend:
 
 postgresql:
   auth:
-    username: dbuser
+    username: user
     database: app_db
     existingSecret: postgres-pass
     secretKeys:
