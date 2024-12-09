@@ -29,7 +29,10 @@ spec:
             - name: DATABASE_USER
               value: {{ .Values.backend.env.DATABASE_USER | quote }}
             - name: DATABASE_PASSWORD
-              value: {{ .Values.backend.env.DATABASE_PASSWORD | quote }}
+              valueFrom:
+                secretRefKey:
+                  name: {{ .Values.postgresql.auth.existingSecret }}
+                  key: {{ .Values.postgresql.auth.secretKeys.userPasswordKey }}
             - name: DATABASE_NAME
               value: {{ .Values.backend.env.DATABASE_NAME | quote }}
           volumeMounts:

@@ -140,7 +140,6 @@ backend:
     port: 5000
   env:
     DATABASE_USER: dbuser
-    DATABASE_PASSWORD: pass123
     DATABASE_NAME: app_db
   livenessProbe:
     httpGet:
@@ -173,9 +172,17 @@ backend:
 postgresql:
   auth:
     username: dbuser
-    password: pass123
     database: app_db
+    existingSecret: postgres-pass
+    secretKeys:
+      userPasswordKey: db-pass
   primary:
     persistence:
       enabled: true
       size: 500Mi
+
+secretStore:
+  remoteRefKey: 3tier/postgresql
+  remoteRefProperty: 3tier-app-postgres-pass
+  awscred: aws-credentials
+  region: us-east-1  
