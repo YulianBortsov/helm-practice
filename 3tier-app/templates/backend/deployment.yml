@@ -30,7 +30,7 @@ spec:
               value: {{ .Values.backend.env.DATABASE_USER | quote }}
             - name: DATABASE_PASSWORD
               valueFrom:
-                secretRefKey:
+                secretKeyref:
                   name: {{ .Values.postgresql.auth.existingSecret }}
                   key: {{ .Values.postgresql.auth.secretKeys.userPasswordKey }}
             - name: DATABASE_NAME
