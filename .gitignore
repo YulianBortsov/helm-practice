@@ -1,1 +1,2 @@
 ./webapp/templates/secrets.yml
+./3tier-app/templates/sec/secret.yml

@@ -176,6 +176,7 @@ postgresql:
     existingSecret: postgres-pass
     secretKeys:
       userPasswordKey: db-pass
+      adminPasswordKey: db-admin-pass
   primary:
     persistence:
       enabled: true
@@ -184,5 +185,6 @@ postgresql:
 secretStore:
   remoteRefKey: 3tier/postgresql
   remoteRefProperty: 3tier-app-postgres-pass
+  remoteRefPropertyAdmin: 3tier-app-postgres-admin-pass
   awscred: aws-credentials
   region: us-east-1  
