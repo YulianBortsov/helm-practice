@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-cm-backend
+data:
+  app.py: |
+{{ .Files.Get "app.py" | indent 4 }}
+---
+apiVersion: v1
+data:
+  requirements.txt: |
+    Flask
+    psycopg2-binary
+    SQLAlchemy
+kind: ConfigMap
+metadata:
+  name: requirements-cm-backend

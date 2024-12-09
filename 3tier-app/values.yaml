@@ -1,50 +1,17 @@
-# Default values for webapp.
+# Default values for 3tier-app.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
-labels:
-  app: webapp
 
-globalKey: "I am global"
-nestedContext:
-  nestedKey: "I am nested"
-
-nginxPod:
-  name: nginx
-  image: nginx
-  tag: "latest"
-  replicas: 1
-  enabled: false
-  env:
-    FIRST_ENV: first_env
-    SECOND_ENV: second_env
-
-postInstallJob:
-  name: curling-container
-  imageRepo: curlimages/curl
-  tag: "8.11.0"
-
-isProd: false
-prod:
-  replicaCount: 3
-  environment: Production
-dev:
-  replicaCount: 1
-  environment: Development
 # This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
-redis:
-  enabled: true
-  port: 6379
-  auth:
-    existingSecret: redis-pass-from-aws
-    existingSecretPasswordKey: redis-password
-  architecture: standalone
+replicaCount: 1
+
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 image:
-  repository: python
+  repository: nginx
   # This sets the pull policy for images.
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "3.9-slim"
+  tag: ""
 
 # This is for the secretes for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
@@ -64,13 +31,30 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
+# This is for setting Kubernetes Annotations to a Pod.
+# For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/ 
+podAnnotations: {}
+# This is for setting Kubernetes Labels to a Pod.
+# For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+podLabels: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
 
 # This is for setting up a service more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/
 service:
   # This sets the service type more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
   type: ClusterIP
   # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
-  port: 8080
+  port: 80
 
 # This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
@@ -102,24 +86,7 @@ resources: {}
   #   memory: 128Mi
 
 # This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
-livenessProbe:
-  httpGet:
-    path: /
-    port: 8080
-  initialDelaySeconds: 10   # Delay before the first check
-  periodSeconds: 10        # Check every 10 seconds
-  timeoutSeconds: 1        # Timeout if no response within 1 second
-  successThreshold: 1      # Require 1 successful check to pass
-  failureThreshold: 3      # Fail after 3 consecutive failures
-readinessProbe:
-  httpGet:
-    path: /
-    port: 8080
-  initialDelaySeconds: 15  # Delay before the first check
-  periodSeconds: 15        # Check every 15 seconds
-  timeoutSeconds: 1        # Timeout if no response within 1 second
-  successThreshold: 2      # Require 1 successful check to pass
-  failureThreshold: 5      # Fail after 5 consecutive failures
+
 
 #This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/
 autoscaling:
@@ -130,19 +97,14 @@ autoscaling:
   # targetMemoryUtilizationPercentage: 80
 
 # Additional volumes on the output Deployment definition.
-volumes: 
-  - name: app-script
-    configMap:
-      name: webapp-config
+volumes: []
 # - name: foo
 #   secret:
 #     secretName: mysecret
 #     optional: false
 
 # Additional volumeMounts on the output Deployment definition.
-volumeMounts: 
-  - name: app-script
-    mountPath: /app
+volumeMounts: []
 # - name: foo
 #   mountPath: "/etc/foo"
 #   readOnly: true
@@ -153,23 +115,67 @@ tolerations: []
 
 affinity: {}
 
-external-secrets:
-  namespace: default
-  installCRDs: True 
 
-awscredName: aws-credentials
-clusterStore:
-  provider:
-      aws:
-        service: SecretsManager
-        region: us-east-1
-        auth:
-          secretRef:
-            accessKeyIDSecretRef:
-              name: aws-credentials  
-              key: access-key
-            secretAccessKeySecretRef:
-              name: aws-credentials
-              key: secret-key
+frontend:
+  image:
+    repository: nginx
+    tag: latest
+    pullPolicy: IfNotPresent
+  replicaCount: 2
+  service:
+    type: ClusterIP
+    port: 80
+  ingress:
+    enabled: True
+    host: web-app.local
 
-targetSecretName: redis-pass-from-aws
+backend:
+  image:
+    repository: python
+    tag: "3.13.1-slim"
+    pullPolicy: IfNotPresent
+  replicaCount: 2
+  service:
+    type: ClusterIP
+    port: 5000
+  env:
+    DATABASE_USER: dbuser
+    DATABASE_PASSWORD: pass123
+    DATABASE_NAME: app_db
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: 5000
+    initialDelaySeconds: 5
+    periodSeconds: 10
+  readinessProbe:
+    httpGet:
+      path: /ready
+      port: 5000
+    initialDelaySeconds: 5
+    periodSeconds: 10
+  volumes:
+    - name: web-app-volume
+      configMap:
+        name: app-cm-backend
+    - name: requirements-volume
+      configMap:
+        name: requirements-cm-backend
+  volumeMounts:
+    - name: web-app-volume
+      mountPath: /app/app.py
+      subPath: app.py
+    - name: requirements-volume
+      mountPath: /app/requirements.txt
+      subPath: requirements.txt
+
+
+postgresql:
+  auth:
+    username: dbuser
+    password: pass123
+    database: app_db
+  primary:
+    persistence:
+      enabled: true
+      size: 500Mi

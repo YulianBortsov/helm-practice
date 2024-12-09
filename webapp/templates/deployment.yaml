@@ -53,7 +53,7 @@ spec:
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ $.Release.Name }}-redis
+                  name: {{ $.Values.targetSecretName }}
                   key: redis-password
           {{- end }}
           ports:
