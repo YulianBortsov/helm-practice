@@ -18,7 +18,7 @@ spec:
     {{- if $.Values.customValues }}
     helm:
       valueFiles:
-        - $values/values.yaml
+        - $values/web-app-argocdApp/values.yaml
     {{- end }}
   destination:
     server: https://kubernetes.default.svc
