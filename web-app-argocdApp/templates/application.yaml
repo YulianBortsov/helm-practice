@@ -8,9 +8,18 @@ metadata:
 spec:
   project: default        
   source:
-    repoURL: {{ .sourceUrl }}
+  - repoURL: {{ .sourceUrl }}
+    targetRevision: main
+    path: web-app-argocdApp
+    ref: values
+  - repoURL: {{ .sourceUrl }}
     targetRevision: main
     path: {{ .repoName }}
+    {{- if $.Values.customValues }}
+    helm:
+      valueFiles:
+        - $values/values.yaml
+    {{- end }}
   destination:
     server: https://kubernetes.default.svc
     namespace: {{ .namespace }}      
