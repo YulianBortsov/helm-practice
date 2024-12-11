@@ -10,7 +10,6 @@ spec:
   sources:
   - repoURL: {{ .sourceUrl }}
     targetRevision: main
-    path: web-app-argocdApp
     ref: values
   - repoURL: {{ .sourceUrl }}
     targetRevision: main
