@@ -23,6 +23,10 @@ spec:
             - pip install -r /app/requirements.txt && python /app/app.py;   
           ports:
             - containerPort: 5000
+          livenessProbe:
+            {{- toYaml .Values.backend.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.backend.readinessProbe | nindent 12 }}
           env:
             - name: DATABASE_HOST
               value: {{ .Release.Name }}-postgresql

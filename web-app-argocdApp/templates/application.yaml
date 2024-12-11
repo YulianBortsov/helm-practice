@@ -24,10 +24,6 @@ spec:
     server: https://kubernetes.default.svc
     namespace: {{ .namespace }}      
   syncPolicy:
-    automated:            
-      prune: true          
-      selfHeal: true       
-    syncOptions:           
-      - CreateNamespace=true 
+    {{- toYaml .syncPolicy | nindent 4 }}
 {{- end }}
 {{- end }}

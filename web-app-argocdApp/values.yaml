@@ -4,7 +4,16 @@ threeTierApp:
   sourceUrl: https://github.com/YulianBortsov/helm-practice.git
   repoName: 3tier-app
   namespace: 3tier-app
+  syncPolicy:
+    automated:            
+      prune: true          
+      selfHeal: true 
+      rollback: true      
+    syncOptions:           
+      - CreateNamespace=true
 
+
+# set to True to use this values file also as a values file for the 3tier chart
 customValues: true
 
 frontend:
