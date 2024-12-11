@@ -7,8 +7,7 @@ threeTierApp:
   syncPolicy:
     automated:            
       prune: true          
-      selfHeal: true 
-      rollback: true      
+      selfHeal: true       
     syncOptions:           
       - CreateNamespace=true
 
