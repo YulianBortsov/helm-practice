@@ -17,3 +17,5 @@ customValues: true
 
 frontend:
   replicaCount: 3 
+  image:
+    repository: yulianbortsov/3tier-front
