@@ -21,7 +21,3 @@ frontend:
     repository: yulianbortsov/3tier-front
     tag: 0.1
 
-backend:
-  image:
-    repository: yulianbortsov/3tier-back
-    tag: 0.5
