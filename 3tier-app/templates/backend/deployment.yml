@@ -17,7 +17,10 @@ spec:
       containers:
         - name: backend
           image: {{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}
-          imagePullPolicy: {{ .Values.backend.image.pullPolicy }}  
+          imagePullPolicy: {{ .Values.backend.image.pullPolicy }} 
+          command: ["/bin/bash", "-c"]
+          args:
+            - pip install -r /app/requirements.txt && python /app/app.py; 
           ports:
             - containerPort: 5000
           livenessProbe:
@@ -36,3 +39,7 @@ spec:
                   key: {{ .Values.postgresql.auth.secretKeys.userPasswordKey }}
             - name: DATABASE_NAME
               value: {{ .Values.backend.env.DATABASE_NAME | quote }}
+          volumeMounts:
+            {{- toYaml .Values.backend.volumeMounts | nindent 12 }}
+      volumes:
+        {{- toYaml .Values.backend.volumes | nindent 8 }}
