@@ -108,20 +108,7 @@ backend:
       port: 5000
     initialDelaySeconds: 7
     periodSeconds: 10
-  volumes:
-    - name: web-app-volume
-      configMap:
-        name: app-cm-backend
-    - name: requirements-volume
-      configMap:
-        name: requirements-cm-backend
-  volumeMounts:
-    - name: web-app-volume
-      mountPath: /app/app.py
-      subPath: app.py
-    - name: requirements-volume
-      mountPath: /app/requirements.txt
-      subPath: requirements.txt
+
 
 
 postgresql:
