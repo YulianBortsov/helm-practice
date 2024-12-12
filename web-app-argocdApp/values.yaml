@@ -24,4 +24,4 @@ frontend:
 backend:
   image:
     repository: yulianbortsov/3tier-back
-    tag: 0.3
+    tag: 0.4
