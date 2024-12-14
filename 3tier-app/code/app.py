@@ -32,7 +32,7 @@ Base.metadata.create_all(engine)
 
 # Added basic CRUD routes
 # POST on /items
-@app.route('/items', methods=['POST'])
+@app.route('/api/items', methods=['POST'])
 def create_item():
     data = request.json
     try:
@@ -60,7 +60,7 @@ def create_item():
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
 # GET on /items
-@app.route('/items', methods=['GET'])
+@app.route('/api/items', methods=['GET'])
 def get_items():
     try:
         # Create a session
@@ -79,7 +79,7 @@ def get_items():
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
 # PUT on /items/<item_id>
-@app.route('/items/<int:item_id>', methods=['PUT'])
+@app.route('/api/items/<int:item_id>', methods=['PUT'])
 def update_item(item_id):
     data = request.json
     try:
@@ -111,7 +111,7 @@ def update_item(item_id):
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
 # DELETE on /items/<item_id>
-@app.route('/items/<int:item_id>', methods=['DELETE'])
+@app.route('/api/items/<int:item_id>', methods=['DELETE'])
 def delete_item(item_id):
     try:
         # Create a session
@@ -136,7 +136,7 @@ def delete_item(item_id):
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
 # Route to check the database connection
-@app.route('/')
+@app.route('/api')
 def check_db_connection():
     try:
         # Test connection by executing a simple query

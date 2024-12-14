@@ -15,9 +15,8 @@ threeTierApp:
 # set to True to use this values file also as a values file for the 3tier chart
 customValues: true
 
-frontend:
-  replicaCount: 3 
+frontend: 
   image:
     repository: yulianbortsov/3tier-front
-    tag: 0.1
+    tag: 0.2
 

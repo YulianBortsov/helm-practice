@@ -97,14 +97,14 @@ backend:
     DATABASE_NAME: app_db
   livenessProbe:
     httpGet:
-      path: /
+      path: /api
       port: 5000
     initialDelaySeconds: 7
     periodSeconds: 10
     failureThreshold: 5
   readinessProbe:
     httpGet:
-      path: /
+      path: /api
       port: 5000
     initialDelaySeconds: 7
     periodSeconds: 10
