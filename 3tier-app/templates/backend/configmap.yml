@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: app-cm-backend
+  name: {{ .Values.backend.appcnName }}
 data:
   app.py: |
 {{ .Files.Get "code/app.py" | indent 4 }}
@@ -12,4 +12,4 @@ data:
 {{ .Files.Get "code/requirements.txt" | nindent 4 }}
 kind: ConfigMap
 metadata:
-  name: requirements-cm-backend
+  name: {{ .Values.backend.requirementscmName }}

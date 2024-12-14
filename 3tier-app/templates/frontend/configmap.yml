@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.frontend.staticcmName }}
+data:
+  index.html: |
+{{ .Files.Get "static/index.html" | nindent 4 }}
+  script.js: |
+{{ .Files.Get "static/script.js" | nindent 4 }}
+  styles.css: |
+{{ .Files.Get "static/styles.css" | nindent 4 }}    

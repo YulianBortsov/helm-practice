@@ -82,6 +82,16 @@ frontend:
   ingress:
     enabled: True
     host: web-app.local
+  staticcmName: &staticfront frontend-static-files
+  volumes:
+    - name: *staticfront
+      configMap:
+        name: *staticfront
+  volumeMounts:
+    - name: *staticfront
+      mountPath: /usr/share/nginx/html
+
+
 
 backend:
   image:
@@ -108,18 +118,20 @@ backend:
       port: 5000
     initialDelaySeconds: 7
     periodSeconds: 10
+  appcmName: &appcm app-cm-backend
+  requirementscmName: &requirecm requirements-cm-backend
   volumes:
-    - name: web-app-volume
+    - name: *appcm
       configMap:
-        name: app-cm-backend
-    - name: requirements-volume
+        name: *appcm
+    - name: *requirecm
       configMap:
-        name: requirements-cm-backend
+        name: *requirecm
   volumeMounts:
-    - name: web-app-volume
+    - name: *appcm
       mountPath: /app/app.py
       subPath: app.py
-    - name: requirements-volume
+    - name: *requirecm
       mountPath: /app/requirements.txt
       subPath: requirements.txt
 

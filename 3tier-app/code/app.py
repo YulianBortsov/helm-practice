@@ -1,10 +1,12 @@
 from flask import Flask, jsonify, request
+from flask_cors import CORS 
 from sqlalchemy import create_engine, text, Column, Integer, String
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import declarative_base, sessionmaker
 import os
 
 app = Flask(__name__)
+CORS(app)
 
 # Database configuration from environment variables
 DB_HOST = os.getenv('DATABASE_HOST', 'web-app-application-postgresql')

@@ -17,6 +17,5 @@ customValues: true
 
 frontend: 
   image:
-    repository: yulianbortsov/3tier-front
-    tag: 0.2
+    tag: alpine
 
