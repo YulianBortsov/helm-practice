@@ -17,7 +17,7 @@ data:
         const description = document.getElementById('description').value;
 
         try {
-            const response = await fetch('http://${backendServiceHost}:${backendPort}/api/items', {
+            const response = await fetch(`http://${backendServiceHost}:${backendPort}/api/items`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, description }),
@@ -33,7 +33,7 @@ data:
 
     async function loadItems() {
         try {
-            const response = await fetch('http://${backendServiceHost}:${backendPort}/api/items');
+            const response = await fetch(`http://${backendServiceHost}:${backendPort}/api/items`);
             const items = await response.json();
 
             const itemsList = document.getElementById('itemsList');
