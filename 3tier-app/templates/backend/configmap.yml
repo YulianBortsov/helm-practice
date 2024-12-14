@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Values.backend.appcnName }}
+  name: {{ .Values.backend.appcmName }}
 data:
   app.py: |
 {{ .Files.Get "code/app.py" | indent 4 }}
