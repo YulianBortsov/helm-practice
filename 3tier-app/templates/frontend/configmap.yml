@@ -9,7 +9,7 @@ data:
     console.log('Static content served successfully!');
 
     const backendServiceHost = "127.0.0.1";
-    const backendPort = "40133";
+    const backendPort = "37093";
 
     document.getElementById('createItemForm').addEventListener('submit', async (event) => {
         event.preventDefault();
