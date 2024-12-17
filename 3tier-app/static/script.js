@@ -1,7 +1,7 @@
 console.log('Static content served successfully!');
 
-const backendServiceHost = "{{ .Release.Name }}-backend";
-const backendPort = "{{ .Values.backend.service.port }}";
+const backendServiceHost = "127.0.0.1";
+const backendPort = "37093";
 
 document.getElementById('createItemForm').addEventListener('submit', async (event) => {
     event.preventDefault();
