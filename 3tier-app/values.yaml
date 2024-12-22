@@ -68,7 +68,7 @@ autoscaling:
 
 
 
-localPort: 36511
+localPort: 39235
 
 frontend:
   image:
