@@ -68,7 +68,7 @@ autoscaling:
 
 
 
-
+localPort: 50505
 
 frontend:
   image:

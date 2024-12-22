@@ -17,11 +17,20 @@
         <button type="submit">Create</button>
     </form>
 
+    <h2>Edit Item</h2>
+    <form id="editItemForm" style="display:none;">
+        <input type="hidden" id="editItemId">
+        <label for="editName">Name:</label>
+        <input type="text" id="editName" name="editName" required>
+        <label for="editDescription">Description:</label>
+        <input type="text" id="editDescription" name="editDescription">
+        <button type="submit">Save Changes</button>
+    </form>
+
     <h2>Items List</h2>
     <button onclick="loadItems()">Load Items</button>
     <ul id="itemsList"></ul>
 
     <script src="script.js"></script>
-
 </body>
 </html>
