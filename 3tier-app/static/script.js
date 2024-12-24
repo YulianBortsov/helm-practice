@@ -1,7 +1,7 @@
 console.log('Static content served successfully!');
 
-const backendServiceHost = "127.0.0.1";
-const backendPort = "37093";
+const backendServiceHost = "{{ .Release.Name }}-backend";
+const backendPort = "{{ .Values.backend.service.port }}";
 
 document.getElementById('createItemForm').addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -17,6 +17,7 @@ document.getElementById('createItemForm').addEventListener('submit', async (even
 
         const data = await response.json();
         alert(data.message || 'Error occurred!');
+        loadItems();
     } catch (error) {
         console.error('Error during fetch:', error);
         alert('Error occurred!');
@@ -32,7 +33,11 @@ async function loadItems() {
         itemsList.innerHTML = '';
         items.forEach(item => {
             const listItem = document.createElement('li');
-            listItem.textContent = `${item.name}: ${item.description || 'No description'}`;
+            listItem.innerHTML = `
+                ${item.name}: ${item.description || 'No description'}
+                <button onclick="editItem(${item.id}, '${item.name}', '${item.description}')">Edit</button>
+                <button onclick="deleteItem(${item.id})">Delete</button>
+            `;
             itemsList.appendChild(listItem);
         });
     } catch (error) {
@@ -41,3 +46,49 @@ async function loadItems() {
     }
 }
 
+function editItem(id, name, description) {
+    document.getElementById('editItemForm').style.display = 'block';
+    document.getElementById('editItemId').value = id;
+    document.getElementById('editName').value = name;
+    document.getElementById('editDescription').value = description;
+}
+
+document.getElementById('editItemForm').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const id = document.getElementById('editItemId').value;
+    const name = document.getElementById('editName').value;
+    const description = document.getElementById('editDescription').value;
+
+    try {
+        const response = await fetch(`http://${backendServiceHost}:${backendPort}/api/items/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, description }),
+        });
+
+        const data = await response.json();
+        alert(data.message || 'Error occurred!');
+        document.getElementById('editItemForm').style.display = 'none';
+        loadItems();
+    } catch (error) {
+        console.error('Error during fetch:', error);
+        alert('Error occurred!');
+    }
+});
+
+async function deleteItem(id) {
+    if (!confirm('Are you sure you want to delete this item?')) return;
+
+    try {
+        const response = await fetch(`http://${backendServiceHost}:${backendPort}/api/items/${id}`, {
+            method: 'DELETE',
+        });
+
+        const data = await response.json();
+        alert(data.message || 'Error occurred!');
+        loadItems();
+    } catch (error) {
+        console.error('Error during fetch:', error);
+        alert('Error occurred!');
+    }
+}
